@@ -1,0 +1,63 @@
+{
+  "User": {
+    "description": "Represents the real user authenticated via Firebase. Tracks linked devices but never stores passwords.",
+    "fields": ["firebase_uid", "devices", "created_at", "status"],
+    "relations": {
+      "hasMany": ["ShieldIdentity"]
+    }
+  },
+  "Device": {
+    "description": "Subdocument of User. Tracks devices the user has linked, device type, last active timestamp, optional push tokens.",
+    "fields": ["device_id", "device_name", "device_type", "last_active", "push_token"]
+  },
+  "ShieldIdentity": {
+    "description": "AI-generated proxy identity used to interact with external services. Contains proxy email/phone and browser fingerprint. Enables zero-knowledge browsing.",
+    "fields": ["user_id", "proxy_email", "proxy_phone", "browser_fingerprint", "creation_time", "status", "linked_services"],
+    "relations": {
+      "belongsTo": "User",
+      "hasMany": ["IdentityRotation", "CommunicationProxy", "ThreatEvent", "AuditLog", "AIEngineLog", "ShieldAccess"]
+    }
+  },
+  "IdentityRotation": {
+    "description": "Tracks automatic or manual rotation of Shield identities to replace compromised credentials. Supports self-healing.",
+    "fields": ["shield_id", "rotation_type", "timestamp", "reason", "new_shield_id"],
+    "relations": {
+      "belongsTo": "ShieldIdentity"
+    }
+  },
+  "CommunicationProxy": {
+    "description": "Captures all messages (email/SMS) sent to a ShieldIdentity. Sanitizes content, removes trackers, and tracks delivery status.",
+    "fields": ["shield_id", "type", "sender", "recipient", "received_at", "delivered_at", "status", "sanitized_content"],
+    "relations": {
+      "belongsTo": "ShieldIdentity"
+    }
+  },
+  "ThreatEvent": {
+    "description": "Logs anomalous or suspicious activity related to a ShieldIdentity, e.g., unauthorized IPs, credential leaks, phishing attempts. Enables fraud detection.",
+    "fields": ["shield_id", "event_type", "detected_at", "severity", "metadata"],
+    "relations": {
+      "belongsTo": "ShieldIdentity"
+    }
+  },
+  "AuditLog": {
+    "description": "Immutable log of all critical events (rotations, burns, suspicious access, filtered communications) stored with blockchain hash for accountability.",
+    "fields": ["shield_id", "action", "timestamp", "blockchain_hash", "metadata"],
+    "relations": {
+      "belongsTo": "ShieldIdentity"
+    }
+  },
+  "AIEngineLog": {
+    "description": "Optional logs of AI engine decisions, e.g., flagged phishing or suspicious activity, with confidence scores.",
+    "fields": ["shield_id", "action", "confidence", "timestamp", "metadata"],
+    "relations": {
+      "belongsTo": "ShieldIdentity"
+    }
+  },
+  "ShieldAccess": {
+    "description": "Tracks each access of a ShieldIdentity, including device, IP, and geolocation. Core for fraud detection and anomaly monitoring.",
+    "fields": ["shield_id", "device_id", "ip_address", "location", "accessed_at"],
+    "relations": {
+      "belongsTo": "ShieldIdentity"
+    }
+  }
+}
