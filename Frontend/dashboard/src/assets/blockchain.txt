@@ -1,0 +1,63 @@
+Goal
+
+Create a frontend dashboard component that displays security events stored on blockchain for ProxyShield-11.
+
+The frontend should not implement blockchain logic or generate logs.
+It must use the data already available in the backend folder and display it in the UI.
+
+Data Source
+
+Use the existing backend data from the backend folder.
+
+The frontend should fetch the blockchain security logs from the backend API or data service provided in the backend folder.
+
+Each log entry from the backend will contain fields such as:
+
+event
+
+service_name
+
+timestamp
+
+transaction_hash
+
+verification_status
+
+The frontend should directly consume this backend data and render it in the UI.
+
+Display Requirements
+
+Display the logs in a table format.
+
+Example layout:
+
+Event	Service	Timestamp	Hash
+Identity Burn	LinkedIn	10:30 PM	0x72af...
+Identity Created	Netflix	9:10 PM	0xa912...
+Badge Requirement
+
+If the backend data contains verification_status = verified, display a badge such as:
+
+🔒 Verified on Blockchain
+or
+⛓ Immutable Record
+
+Features
+
+The frontend should:
+
+• fetch blockchain event logs from the backend folder/API
+• display the logs in a table view
+• show the transaction hash for each event
+• display a verification badge if provided in backend data
+• support sorting by timestamp
+
+Tech Stack
+
+Frontend:
+
+React.js
+
+Tailwind CSS
+
+Axios or fetch() for retrieving backend data
