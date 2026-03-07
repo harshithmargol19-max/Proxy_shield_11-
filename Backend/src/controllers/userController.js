@@ -1,50 +1,52 @@
 import User from '../models/user.js';
+import { apiError } from '../utils/apiError.js';
+import { sendResponse } from '../utils/apiResponse.js';
 
 export const createUser = async (req, res) => {
   try {
     const user = new User(req.body);
     const savedUser = await user.save();
-    res.status(201).json(savedUser);
+    return sendResponse(res, 201, savedUser, "User created successfully");
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    throw new apiError(400, error.message);
   }
 };
 
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
-    res.json(users);
+    return sendResponse(res, 200, users);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new apiError(500, error.message);
   }
 };
 
 export const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json(user);
+    if (!user) throw new apiError(404, 'User not found');
+    return sendResponse(res, 200, user);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new apiError(error.statusCode || 500, error.message);
   }
 };
 
 export const updateUser = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json(user);
+    if (!user) throw new apiError(404, 'User not found');
+    return sendResponse(res, 200, user, "User updated successfully");
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    throw new apiError(400, error.message);
   }
 };
 
 export const deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json({ message: 'User deleted successfully' });
+    if (!user) throw new apiError(404, 'User not found');
+    return sendResponse(res, 200, null, "User deleted successfully");
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new apiError(500, error.message);
   }
 };

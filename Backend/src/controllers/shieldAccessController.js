@@ -1,50 +1,52 @@
 import SheildAccess from '../models/SheildAccess.js';
+import { apiError } from '../utils/apiError.js';
+import { sendResponse } from '../utils/apiResponse.js';
 
 export const createShieldAccess = async (req, res) => {
   try {
     const access = new SheildAccess(req.body);
     const savedAccess = await access.save();
-    res.status(201).json(savedAccess);
+    return sendResponse(res, 201, savedAccess, "Shield access created successfully");
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    throw new apiError(400, error.message);
   }
 };
 
 export const getAllShieldAccesses = async (req, res) => {
   try {
     const accesses = await SheildAccess.find();
-    res.json(accesses);
+    return sendResponse(res, 200, accesses);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new apiError(500, error.message);
   }
 };
 
 export const getShieldAccessById = async (req, res) => {
   try {
     const access = await SheildAccess.findById(req.params.id);
-    if (!access) return res.status(404).json({ message: 'Shield access not found' });
-    res.json(access);
+    if (!access) throw new apiError(404, 'Shield access not found');
+    return sendResponse(res, 200, access);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new apiError(error.statusCode || 500, error.message);
   }
 };
 
 export const updateShieldAccess = async (req, res) => {
   try {
     const access = await SheildAccess.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!access) return res.status(404).json({ message: 'Shield access not found' });
-    res.json(access);
+    if (!access) throw new apiError(404, 'Shield access not found');
+    return sendResponse(res, 200, access, "Shield access updated successfully");
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    throw new apiError(400, error.message);
   }
 };
 
 export const deleteShieldAccess = async (req, res) => {
   try {
     const access = await SheildAccess.findByIdAndDelete(req.params.id);
-    if (!access) return res.status(404).json({ message: 'Shield access not found' });
-    res.json({ message: 'Shield access deleted successfully' });
+    if (!access) throw new apiError(404, 'Shield access not found');
+    return sendResponse(res, 200, null, "Shield access deleted successfully");
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new apiError(500, error.message);
   }
 };
