@@ -11,11 +11,37 @@ if (!fs.existsSync(PLAN_DIR)) {
   fs.mkdirSync(PLAN_DIR, { recursive: true });
 }
 
+/**
+ * Generate a working proxy email using subaddressing (plus-addressing).
+ * 
+ * Strategy options (set PROXY_EMAIL_STRATEGY in .env):
+ * - "subaddress": Uses Gmail/Outlook plus-addressing (free, easy)
+ * - "domain": Uses your own domain with catch-all (requires domain)
+ * 
+ * For subaddress: Set CATCH_ALL_EMAIL=yourreal@gmail.com
+ * For domain: Set PROXY_DOMAIN=yourdomain.com
+ * 
+ */
 export const generateProxyEmail = (userEmail) => {
+  const strategy = process.env.PROXY_EMAIL_STRATEGY || 'subaddress';
   const prefix = userEmail.substring(0, 3).toLowerCase();
-  const now = new Date();
-  const datetime = now.toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
-  return `${prefix}${datetime}@shield.proxy`;
+  const uniqueId = `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+  
+  if (strategy === 'domain') {
+    // Option: Use your own domain with catch-all routing
+    const domain = process.env.PROXY_DOMAIN || 'shield.proxy';
+    return `${prefix}_${uniqueId}@${domain}`;
+  }
+  
+  // Default: Plus-addressing (works with Gmail, Outlook, etc.)
+  const catchAllEmail = process.env.CATCH_ALL_EMAIL;
+  if (!catchAllEmail) {
+    console.warn('[emailGenerator] CATCH_ALL_EMAIL not set, using fake domain');
+    return `${prefix}_${uniqueId}@shield.proxy`;
+  }
+  
+  const [localPart, domain] = catchAllEmail.split('@');
+  return `${localPart}+shield_${prefix}_${uniqueId}@${domain}`;
 };
 
 

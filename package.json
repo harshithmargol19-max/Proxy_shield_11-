@@ -1,0 +1,37 @@
+{
+  "name": "proxyshield-11",
+  "version": "1.0.0",
+  "description": "ProxyShield-11 - Unified Identity Protection System with Blockchain & AI",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n \"backend,frontend\" -c \"blue,green\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd Backend && npm start",
+    "dev:frontend": "cd Frontend/dashboard && npm run dev",
+    "dev:ai": "cd \"AI Engine\" && .\\venv\\Scripts\\python.exe -m uvicorn app.main:app --port 8000 --reload",
+    "start:all": "concurrently -n \"backend,ai,frontend\" -c \"blue,yellow,green\" \"npm run dev:backend\" \"npm run dev:ai\" \"npm run dev:frontend\"",
+    "install:all": "npm install && cd Backend && npm install && cd ../Frontend/dashboard && npm install",
+    "setup:ai": "cd \"AI Engine\" && python -m venv venv && .\\venv\\Scripts\\pip.exe install -r requirements.txt",
+    "test": "echo \"No tests configured yet\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KeerthiYarashi/Proxy_shield_11-.git"
+  },
+  "keywords": [
+    "hyperledger",
+    "fabric",
+    "blockchain",
+    "identity",
+    "security",
+    "ai",
+    "proxy"
+  ],
+  "author": "ProxyShield Team",
+  "license": "MIT"
+}

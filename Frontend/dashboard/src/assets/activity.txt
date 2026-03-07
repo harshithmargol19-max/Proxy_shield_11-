@@ -1,0 +1,71 @@
+Goal
+
+Create a frontend panel that displays activities performed by the ProxyShield browser extension.
+
+The frontend should not implement extension logic.
+It must use the activity data already available in the backend folder and display it in the dashboard.
+
+Data Source
+
+The frontend should use the existing activity data from the backend folder or API.
+
+Fetch extension activity logs from the backend service provided in the backend folder.
+
+Each activity entry from the backend may contain fields such as:
+
+action
+
+website
+
+shield_email
+
+timestamp
+
+activity_type
+
+Example backend data:
+
+{
+ action: "Generated Shield Identity",
+ website: "twitter.com",
+ shield_email: "twitter@shieldmail.ai",
+ timestamp: "10:45 PM"
+}
+
+The frontend must consume this backend data and render it in the activity panel.
+
+Display Requirements
+
+Display activities in a timeline or list format.
+
+Example UI:
+
+Detected signup form → Generated Shield Identity
+
+Website: twitter.com
+Email injected: twitter@shieldmail.ai
+Time: 10:45 PM
+Features
+
+The panel should:
+
+• fetch extension activity logs from the backend folder/API
+• display activities in a timeline or list view
+• show website name
+• show generated shield identity
+• show timestamp of the activity
+
+Optional:
+
+• show activity icons
+• filter activities by website
+
+Tech Stack
+
+Frontend:
+
+React.js
+
+Tailwind CSS
+
+Axios or fetch() to retrieve backend data

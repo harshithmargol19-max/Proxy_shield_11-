@@ -1,0 +1,16 @@
+{
+  "indexes": {
+    "indexTxId": {
+      "fields": ["txId"]
+    },
+    "indexShieldId": {
+      "fields": ["shieldId"]
+    },
+    "indexEventType": {
+      "fields": ["eventType"]
+    },
+    "indexShieldType": {
+      "fields": ["shieldId", "eventType"]
+    }
+  }
+}

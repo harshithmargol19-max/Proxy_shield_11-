@@ -1,0 +1,17 @@
+{
+  "name": "securitylogs-chaincode",
+  "version": "1.0.0",
+  "description": "ProxyShield-11 Security Logs Chaincode for Hyperledger Fabric",
+  "main": "index.js",
+  "scripts": {
+    "start": "fabric-chaincode-node start",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest"
+  },
+  "dependencies": {
+    "fabric-contract-api": "^2.5.0",
+    "fabric-shim": "^2.5.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

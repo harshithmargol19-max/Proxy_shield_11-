@@ -1,11 +1,33 @@
 import IdentityRotation from '../models/IdentityRotation.js';
+import ShieldIdentity from '../models/ShieldIdentity.js';
+import AuditLog from '../models/AuditLog.js';
 import { apiError } from '../utils/apiError.js';
 import { sendResponse } from '../utils/apiResponse.js';
+import { logSecurityEvent } from '../services/blockchainService.js';
+import { buildIdentityRotatedEvent } from '../services/blockchainEventSchema.js';
 
 export const createIdentityRotation = async (req, res) => {
   try {
     const rotation = new IdentityRotation(req.body);
     const savedRotation = await rotation.save();
+
+    // Log identity_rotated to blockchain (non-blocking)
+    try {
+      const oldShield = await ShieldIdentity.findById(savedRotation.shield_id);
+      const event = buildIdentityRotatedEvent(savedRotation, oldShield);
+      const bcResult = await logSecurityEvent(event.event_type, event.shield_id, event);
+      if (bcResult.success) {
+        await new AuditLog({
+          shield_id: savedRotation.shield_id,
+          action: 'rotation',
+          blockchain_hash: bcResult.txId,
+          metadata: { event_type: 'identity_rotated' },
+        }).save();
+      }
+    } catch (bcError) {
+      console.error('[Blockchain] identity_rotated logging failed:', bcError.message);
+    }
+
     return sendResponse(res, 201, savedRotation, "Identity rotation created successfully");
   } catch (error) {
     throw new apiError(400, error.message);

@@ -1,0 +1,83 @@
+Goal
+
+Create a frontend Inbox Dashboard that displays all emails and SMS messages received by Shield Identities.
+
+The frontend does not process messages or perform security scanning.
+It only displays processed message data from the backend folder or API.
+
+Data Source
+
+Fetch messages from the backend folder/API.
+
+Each message entry contains:
+
+id
+sender
+subject
+message_type (email / sms)
+service_name
+timestamp
+security_status
+tracker_removed
+phishing_detected
+safe_link_preview
+
+Example backend data:
+
+{
+ sender: "Amazon",
+ subject: "Order Confirmation",
+ message_type: "email",
+ security_status: "safe",
+ tracker_removed: true,
+ phishing_detected: false,
+ timestamp: "10:42 PM"
+}
+Display Requirements
+
+Create an Inbox UI showing:
+
+From	Subject	Type	Status	Time
+Amazon	Order Confirmation	Email	✅ Safe	10:42 PM
+Security Labels
+
+Use labels based on backend data.
+
+✅ Safe
+⚠ Suspicious
+🚫 Phishing
+
+Optional tag:
+
+Tracker Removed
+Features
+
+The inbox should support:
+
+• list view of messages
+• click message to view details
+• show security labels
+• show tracker removed notification
+• show safe link preview if available
+
+UI Example
+From: Amazon
+Subject: Order Confirmation
+
+Status: ✅ Safe
+Tracker Removed: Yes
+
+Safe Link Preview:
+https://amazon.com/orders
+Tech Stack
+
+Frontend:
+
+• React.js
+• Tailwind CSS
+• Axios / fetch()
+
+Optional:
+
+• React Icons for labels
+• React Table for inbox list

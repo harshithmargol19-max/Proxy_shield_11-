@@ -1,5 +1,5 @@
-import User from '../../src/models/user.js';
-import ShieldIdentity from '../../src/models/ShieldIdentity.js';
+import User from '../../../src/models/user.js';
+import ShieldIdentity from '../../../src/models/ShieldIdentity.js';
 import { sendEmail } from './emailSender.js';
 
 export const routeEmailToUser = async (emailData) => {

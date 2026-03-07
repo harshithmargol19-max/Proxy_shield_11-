@@ -9,6 +9,7 @@ const aiEngineLogSchema = new Schema({
   metadata: { type: Schema.Types.Mixed }
 });
 
+
 const AIEngineLog = mongoose.model('AIEngineLog', aiEngineLogSchema);
 
 export default AIEngineLog;

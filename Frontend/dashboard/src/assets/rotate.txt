@@ -1,0 +1,72 @@
+Goal
+
+Create a frontend component that displays a timeline of identity rotation events for ProxyShield-11.
+The frontend does not perform identity rotation or AI detection, it only reads and displays log data from the backend folder/API.
+
+Data Source
+
+Fetch rotation log data from the backend folder or API endpoint.
+
+Each log entry contains:
+
+timestamp
+service_name
+event_type
+reason
+old_identity
+new_identity
+
+Example backend data:
+
+{
+  timestamp: "11:24 PM",
+  service_name: "LinkedIn",
+  event_type: "identity_burn",
+  reason: "credential leak",
+  old_identity: "linkedin@shieldmail.ai",
+  new_identity: "linkedin_new@shieldmail.ai"
+}
+Display Requirements
+
+Show logs in a timeline format.
+
+Example UI:
+
+11:24 PM
+🔥 Identity Burned
+Service: LinkedIn
+Reason: Credential Leak
+
+11:24 PM
+🆕 New Identity Issued
+Email: linkedin_new@shieldmail.ai
+Features
+
+The frontend should:
+
+• Fetch log data from backend folder/API
+• Display logs in timeline format
+• Show icons for events
+• Sort by latest events first
+• Support scrollable event history
+
+UI/UX
+
+Use color coding:
+
+🔥 Identity Burned → Red
+🆕 New Identity Issued → Green
+⚠️ Suspicious Activity → Yellow
+Tech Stack
+
+Frontend:
+
+React.js
+
+Tailwind CSS
+
+Axios / fetch()
+
+Optional:
+
+React Timeline component
