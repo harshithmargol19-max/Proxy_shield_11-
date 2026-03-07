@@ -4,7 +4,7 @@ import Email from '../models/Email.js';
 import { analyzeEmailForFraud } from './fraudAnalysis.js';
 import { routeEmailToUser } from './emailRouter.js';
 
-const startSMTPServer = (port = 2525) => {
+const startSMTPServer = (port = 25) => {
   const server = new SMTPServer({
     onData(stream, session, callback) {
       let rawEmail = '';

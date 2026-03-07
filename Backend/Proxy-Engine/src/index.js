@@ -8,15 +8,14 @@ import { fraudDetector } from './middleware/fraudDetector.js';
 import { emailParser } from './middleware/emailParser.js';
 import { authMiddleware, rateLimiter } from './middleware/authMiddleware.js';
 import { startSMTPServer } from './services/smtpServer.js';
-
-import User from '../src/models/user.js';
-import ShieldIdentity from '../src/models/ShieldIdentity.js';
+import ShieldIdentity from '../../src/models/ShieldIdentity.js';
 import Email from './models/Email.js';
 import FraudReport from './models/FraudReport.js';
+import User from '../../src/models/user.js';
 
 console.log('Models loaded:', {
   User: !!User,
-  ShieldIdentity: !!ShieldIdentity,
+  ShieldIdentity: !! ShieldIdentity,
   Email: !!Email,
   FraudReport: !!FraudReport
 });
