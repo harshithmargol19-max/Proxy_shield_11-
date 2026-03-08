@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { getMockShieldIdentities, getMockShieldAccesses, getMockAILogs } from '../services/mockActivityData';
+import { fetchShieldIdentities, fetchShieldAccesses, fetchAILogs } from '../services/activityApi';
 import { ActivityType, ActivityConfig, defaultActivityFilter } from '../types/activity';
 
 const ActivityContext = createContext(null);
@@ -84,14 +84,17 @@ export const ActivityProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const [identitiesData, accessesData, aiLogsData] = await Promise.all([
-        getMockShieldIdentities(),
-        getMockShieldAccesses(),
-        getMockAILogs(),
+      const [identitiesRes, accessesRes, aiLogsRes] = await Promise.all([
+        fetchShieldIdentities(),
+        fetchShieldAccesses(),
+        fetchAILogs(),
       ]);
-      setIdentities(identitiesData);
-      setAccesses(accessesData);
-      setAiLogs(aiLogsData);
+      const identitiesData = identitiesRes.data || identitiesRes;
+      const accessesData = accessesRes.data || accessesRes;
+      const aiLogsData = aiLogsRes.data || aiLogsRes;
+      setIdentities(Array.isArray(identitiesData) ? identitiesData : []);
+      setAccesses(Array.isArray(accessesData) ? accessesData : []);
+      setAiLogs(Array.isArray(aiLogsData) ? aiLogsData : []);
     } catch (err) {
       setError('Failed to load activities');
       console.error(err);

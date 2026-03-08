@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { Shield, LayoutGrid, List } from 'lucide-react';
+import { Shield, LayoutGrid, List, Plus } from 'lucide-react';
 import FilterBar from '../components/FilterBar';
 import IdentityTable from '../components/IdentityTable';
 import IdentityCard from '../components/IdentityCard';
 import IdentityDetailModal from '../components/IdentityDetailModal';
+import CreateIdentityModal from '../components/CreateIdentityModal';
 import { useIdentities } from '../context/IdentityContext';
 
 const IdentityControlCenter = () => {
   const [viewMode, setViewMode] = useState('table');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { loading, error, selectIdentity } = useIdentities();
 
   const handleIdentityClick = (id) => {
@@ -50,6 +52,13 @@ const IdentityControlCenter = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              >
+                <Plus className="w-5 h-5" />
+                New Identity
+              </button>
               <button onClick={() => setViewMode('table')} className={`p-2 rounded-lg ${viewMode === 'table' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`} title="Table View">
                 <List className="w-5 h-5" />
               </button>
@@ -71,6 +80,7 @@ const IdentityControlCenter = () => {
         </div>
       </main>
       <IdentityDetailModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <CreateIdentityModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </div>
   );
 };

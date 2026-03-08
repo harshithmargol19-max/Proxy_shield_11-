@@ -1,10 +1,30 @@
-import { X, Shield, Mail, Phone, Calendar, Clock, AlertTriangle, Trash2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Shield, Mail, Phone, Calendar, Clock, AlertTriangle, Trash2, Loader2 } from 'lucide-react';
 import StatusBadge from './StatusBadge';
 import { useIdentities } from '../context/IdentityContext';
 import { IdentityStatus } from '../types/identity';
+import { fetchIdentityLogs } from '../services/api';
 
 const IdentityDetailModal = ({ isOpen, onClose }) => {
   const { selectedIdentity, burnIdentity, clearSelection } = useIdentities();
+  const [logs, setLogs] = useState([]);
+  const [logsLoading, setLogsLoading] = useState(false);
+
+  // Fetch activity logs when modal opens
+  useEffect(() => {
+    if (isOpen && selectedIdentity?.id) {
+      setLogsLoading(true);
+      fetchIdentityLogs(selectedIdentity.id)
+        .then((response) => {
+          setLogs(response.data || response || []);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch logs:', err);
+          setLogs([]);
+        })
+        .finally(() => setLogsLoading(false));
+    }
+  }, [isOpen, selectedIdentity?.id]);
 
   if (!isOpen || !selectedIdentity) return null;
 
@@ -71,11 +91,16 @@ const IdentityDetailModal = ({ isOpen, onClose }) => {
             </div>
             <div>
               <h4 className="text-lg font-semibold text-gray-900 mb-3">Activity Log</h4>
-              <div className="space-y-2">
-                {selectedIdentity.logs && selectedIdentity.logs.length > 0 ? (
-                  selectedIdentity.logs.map((log) => (
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {logsLoading ? (
+                  <div className="flex items-center justify-center py-4">
+                    <Loader2 className="w-5 h-5 animate-spin text-indigo-600" />
+                    <span className="ml-2 text-sm text-gray-500">Loading activity...</span>
+                  </div>
+                ) : logs && logs.length > 0 ? (
+                  logs.map((log) => (
                     <div key={log.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                      {log.action.includes('Failed') || log.action.includes('Unusual') || log.action.includes('Compromised') ? (
+                      {log.is_suspicious || log.action?.includes('Suspicious') ? (
                         <AlertTriangle className="w-5 h-5 text-yellow-500 mt-0.5" />
                       ) : (
                         <Clock className="w-5 h-5 text-gray-400 mt-0.5" />
@@ -84,11 +109,16 @@ const IdentityDetailModal = ({ isOpen, onClose }) => {
                         <p className="text-sm font-medium text-gray-900">{log.action}</p>
                         <p className="text-xs text-gray-500">{log.details}</p>
                         <p className="text-xs text-gray-400 mt-1">{new Date(log.timestamp).toLocaleString()}</p>
+                        {log.risk_score > 0 && (
+                          <span className={`inline-block mt-1 px-2 py-0.5 text-xs rounded ${log.risk_score > 70 ? 'bg-red-100 text-red-700' : log.risk_score > 40 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
+                            Risk Score: {log.risk_score}
+                          </span>
+                        )}
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500 text-center py-4">No activity logs available</p>
+                  <p className="text-sm text-gray-500 text-center py-4">No activity logs yet. Activity will appear here when the proxy identity is used.</p>
                 )}
               </div>
             </div>

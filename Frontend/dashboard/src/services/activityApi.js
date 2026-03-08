@@ -20,7 +20,7 @@ export const fetchShieldAccesses = async () => {
 };
 
 export const fetchAILogs = async () => {
-  const response = await api.get('/ai-custom-log');
+  const response = await api.get('/ai-log');
   return response.data;
 };
 

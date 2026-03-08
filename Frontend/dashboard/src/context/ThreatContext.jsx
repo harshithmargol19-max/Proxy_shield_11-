@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { getMockThreatEvents } from '../services/mockThreatData';
+import { fetchThreatEvents } from '../services/threatApi';
 import { ThreatSeverity, defaultThreatFilter } from '../types/threatEvent';
 
 const ThreatContext = createContext(null);
@@ -23,8 +23,9 @@ export const ThreatProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getMockThreatEvents();
-      setThreats(data);
+      const response = await fetchThreatEvents();
+      const data = response.data || response;
+      setThreats(Array.isArray(data) ? data : []);
     } catch (err) {
       setError('Failed to load threat events');
       console.error(err);

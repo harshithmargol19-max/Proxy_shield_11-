@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { getMockMessages } from '../services/mockSmsData';
+import { fetchMessages } from '../services/smsApi';
 import { MessageStatus, SecurityStatus, StatusConfig, MessageType, defaultInboxFilter } from '../types/sms';
 
 const SmsContext = createContext(null);
@@ -69,8 +69,9 @@ export const SmsProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getMockMessages();
-      setMessages(data);
+      const response = await fetchMessages();
+      const data = response.data || response;
+      setMessages(Array.isArray(data) ? data : []);
     } catch (err) {
       setError('Failed to load messages');
       console.error(err);

@@ -7,11 +7,11 @@ const SheildAccessSchema = new Schema({
     shield_id: {
         type: String,
         required: true,
-        unique: true
+        index: true
     },
     timestamp: {
         type: Date,
-        required: true
+        default: Date.now
     },
     ip_address: {
         type: String,
@@ -19,7 +19,19 @@ const SheildAccessSchema = new Schema({
     },
     ip_country: {
         type: String,
-        required: true
+        default: 'Unknown'
+    },
+    geo_location: {
+        country: String,
+        city: String,
+        lat: Number,
+        lng: Number
+    },
+    user_agent: {
+        type: String
+    },
+    device_id: {
+        type: String
     },
     device_type: {
         type: String,

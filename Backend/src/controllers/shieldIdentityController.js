@@ -1,13 +1,38 @@
 import ShieldIdentity from '../models/ShieldIdentity.js';
 import AuditLog from '../models/AuditLog.js';
+import User from '../models/user.js';
 import { apiError } from '../utils/apiError.js';
 import { sendResponse } from '../utils/apiResponse.js';
 import { logSecurityEvent } from '../services/blockchainService.js';
 import { buildIdentityCreatedEvent, buildIdentityBurnedEvent } from '../services/blockchainEventSchema.js';
+import { generateProxyEmail, generateRandomPhone } from '../../Proxy-Engine/src/services/emailGenerator.js';
 
 export const createShieldIdentity = async (req, res) => {
   try {
-    const shield = new ShieldIdentity(req.body);
+    const { user_id, linked_services, website, real_email } = req.body;
+    
+    // Get user's real email for generating proxy email
+    // Priority: 1. real_email from request, 2. from user record, 3. null
+    let userEmail = real_email || null;
+    if (!userEmail && user_id) {
+      const user = await User.findById(user_id);
+      if (user && user.real_email) {
+        userEmail = user.real_email;
+      }
+    }
+    
+    // Auto-generate proxy email and phone if not provided
+    const shieldData = {
+      user_id,
+      proxy_email: req.body.proxy_email || generateProxyEmail(userEmail, website),
+      proxy_phone: req.body.proxy_phone || generateRandomPhone(),
+      browser_fingerprint: req.body.browser_fingerprint || `fp_${Date.now().toString(36)}`,
+      linked_services: linked_services || (website ? [website] : []),
+      website: website,
+      status: 'active'
+    };
+    
+    const shield = new ShieldIdentity(shieldData);
     const savedShield = await shield.save();
 
     // Log identity_created to blockchain (non-blocking)

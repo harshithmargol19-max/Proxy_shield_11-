@@ -45,9 +45,9 @@ export const deleteIdentity = async (id) => {
   return response.data;
 };
 
-// Fetch audit logs for a shield identity
-export const fetchIdentityLogs = async (id) => {
-  const response = await api.get(`/audit-log?shield_id=${id}`);
+// Fetch activity logs for a shield identity
+export const fetchIdentityLogs = async (shieldId) => {
+  const response = await api.get(`/shield-access/by-shield/${shieldId}`);
   return response.data;
 };
 

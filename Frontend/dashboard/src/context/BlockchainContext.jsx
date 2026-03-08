@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { getMockAuditLogs } from '../services/mockBlockchainData';
+import { fetchAuditLogs } from '../services/blockchainApi';
 import { AuditAction, VerificationStatus, defaultBlockchainFilter } from '../types/blockchain';
 
 const BlockchainContext = createContext(null);
@@ -53,8 +53,9 @@ export const BlockchainProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getMockAuditLogs();
-      setLogs(data);
+      const response = await fetchAuditLogs();
+      const data = response.data || response;
+      setLogs(Array.isArray(data) ? data : []);
     } catch (err) {
       setError('Failed to load blockchain logs');
       console.error(err);

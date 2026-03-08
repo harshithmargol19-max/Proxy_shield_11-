@@ -11,8 +11,11 @@ const deviceSchema = new Schema({
 
 const userSchema = new Schema({
   firebase_uid: { type: String, required: true, unique: true }, 
-  real_email: { type: String, required: true },  
+  real_email: { type: String, default: null },  // Optional for anonymous users
   real_phone: { type: String },                  
+  display_name: { type: String },
+  photo_url: { type: String },
+  is_anonymous: { type: Boolean, default: false },
   devices: { type: [deviceSchema], default: [] },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
@@ -20,6 +23,6 @@ const userSchema = new Schema({
   status: { type: String, enum: ['active','suspended','deleted'], default: 'active' }
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 export default User;

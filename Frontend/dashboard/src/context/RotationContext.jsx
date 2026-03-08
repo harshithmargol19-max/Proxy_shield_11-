@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { getMockRotationLogs } from '../services/mockRotationData';
+import { fetchRotationLogs } from '../services/rotationApi';
 import { RotationType, RotationEventType, EventConfig, defaultRotationFilter } from '../types/rotation';
 
 const RotationContext = createContext(null);
@@ -58,8 +58,9 @@ export const RotationProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getMockRotationLogs();
-      setLogs(data);
+      const response = await fetchRotationLogs();
+      const data = response.data || response;
+      setLogs(Array.isArray(data) ? data : []);
     } catch (err) {
       setError('Failed to load rotation logs');
       console.error(err);

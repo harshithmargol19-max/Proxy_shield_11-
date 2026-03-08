@@ -7,6 +7,7 @@ import identityRotationRoutes from './identityRotationRoutes.js';
 import communicationProxyRoutes from './communicationProxyRoutes.js';
 import auditLogRoutes from './auditLogRoutes.js';
 import aiCustomLogRoutes from './aiCustomLogRoutes.js';
+import attackSimulationRoutes from './attackSimulationRoutes.js';
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.use('/identity-rotation', identityRotationRoutes);
 router.use('/communication-proxy', communicationProxyRoutes);
 router.use('/audit-log', auditLogRoutes);
 router.use('/ai-log', aiCustomLogRoutes);
+router.use('/attack-simulation', attackSimulationRoutes);
 
 export default router;

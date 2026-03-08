@@ -14,34 +14,39 @@ if (!fs.existsSync(PLAN_DIR)) {
 /**
  * Generate a working proxy email using subaddressing (plus-addressing).
  * 
- * Strategy options (set PROXY_EMAIL_STRATEGY in .env):
- * - "subaddress": Uses Gmail/Outlook plus-addressing (free, easy)
- * - "domain": Uses your own domain with catch-all (requires domain)
+ * Strategy: Uses the user's own email with plus-addressing
+ * e.g., john@gmail.com → john+shield_amazon_abc123@gmail.com
  * 
- * For subaddress: Set CATCH_ALL_EMAIL=yourreal@gmail.com
- * For domain: Set PROXY_DOMAIN=yourdomain.com
+ * This way each user gets proxy emails forwarded to their own inbox!
  * 
  */
-export const generateProxyEmail = (userEmail) => {
-  const strategy = process.env.PROXY_EMAIL_STRATEGY || 'subaddress';
-  const prefix = userEmail.substring(0, 3).toLowerCase();
+export const generateProxyEmail = (userEmail, website = '') => {
   const uniqueId = `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+  const siteName = website ? website.replace(/[^a-zA-Z0-9]/g, '').substring(0, 10).toLowerCase() : 'site';
   
-  if (strategy === 'domain') {
-    // Option: Use your own domain with catch-all routing
-    const domain = process.env.PROXY_DOMAIN || 'shield.proxy';
-    return `${prefix}_${uniqueId}@${domain}`;
+  // If user email is provided and valid, use it for subaddressing
+  if (userEmail && userEmail.includes('@')) {
+    const [localPart, domain] = userEmail.split('@');
+    // Supported providers: Gmail, Outlook, Yahoo, iCloud, ProtonMail, etc.
+    const supportedDomains = ['gmail.com', 'googlemail.com', 'outlook.com', 'hotmail.com', 'yahoo.com', 'icloud.com', 'protonmail.com', 'proton.me'];
+    
+    if (supportedDomains.some(d => domain.toLowerCase().includes(d.split('.')[0]))) {
+      return `${localPart}+shield_${siteName}_${uniqueId}@${domain}`;
+    }
+    // For other domains, still try subaddressing (many support it)
+    return `${localPart}+shield_${siteName}_${uniqueId}@${domain}`;
   }
   
-  // Default: Plus-addressing (works with Gmail, Outlook, etc.)
+  // Fallback: Use catch-all email if configured
   const catchAllEmail = process.env.CATCH_ALL_EMAIL;
-  if (!catchAllEmail) {
-    console.warn('[emailGenerator] CATCH_ALL_EMAIL not set, using fake domain');
-    return `${prefix}_${uniqueId}@shield.proxy`;
+  if (catchAllEmail && catchAllEmail.includes('@')) {
+    const [localPart, domain] = catchAllEmail.split('@');
+    return `${localPart}+shield_${siteName}_${uniqueId}@${domain}`;
   }
   
-  const [localPart, domain] = catchAllEmail.split('@');
-  return `${localPart}+shield_${prefix}_${uniqueId}@${domain}`;
+  // Last resort: fake domain (won't receive emails)
+  console.warn('[emailGenerator] No valid user email or CATCH_ALL_EMAIL set');
+  return `shield_${siteName}_${uniqueId}@shield.proxy`;
 };
 
 
